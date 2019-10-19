@@ -118,4 +118,65 @@ class Category {
         return false;
     }
 
+    
+    // Update record
+    public function update(){
+        //Create query
+        $query = 'UPDATE ' . 
+            $this->table . '
+            SET
+                `parent_id` = :parent_id,
+                `name` = :name,
+                `sort_order` = :sort_order
+            WHERE
+                `id` = :id';
+        // Prepare statement
+        $statement = $this->conn->prepare($query);
+
+        //Clean data
+        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->parent_id = htmlspecialchars(strip_tags($this->parent_id));
+        $this->name = htmlspecialchars(strip_tags($this->name));
+        $this->sort_order = htmlspecialchars(strip_tags($this->sort_order));
+
+        // Bind data
+        $statement->bindParam(':id', $this->id);
+        $statement->bindParam(':parent_id', $this->parent_id);
+        $statement->bindParam(':name', $this->name);
+        $statement->bindParam(':sort_order', $this->sort_order);
+
+        // Execute query
+        if($statement->execute()) {
+            return true;
+        }
+
+        // Print error
+        printf("\n\nError: %s.\n", $statement->error);
+        return false;
+    }
+
+    //Delete post
+    public function delete() {
+        // Create query
+        $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
+
+        // Prepare statement
+        $statement = $this->conn->prepare($query);
+  
+        //Clean data
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+       // Bind data
+       $statement->bindParam(':id', $this->id);
+
+        // Execute query
+        if($statement->execute()) {
+            return true;
+        }
+
+        // Print error
+        printf("\n\nError: %s.\n", $statement->error);
+        return false;
+    }
+
 }

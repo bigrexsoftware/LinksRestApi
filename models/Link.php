@@ -133,4 +133,80 @@ class Link {
         return false;
     }
 
+    
+    // Update record
+    public function update(){
+        //Create query
+        $query = 'UPDATE ' . 
+            $this->table . '
+            SET
+                `category_id` = :category_id,
+                `sort_order` = :sort_order,
+                `url` = :url,
+                `title` = :title,
+                `source` = :source,
+                `author` = :author,
+                `target` = :target
+            WHERE
+                `id` = :id
+                ';
+        // Prepare statement
+        $statement = $this->conn->prepare($query);
+
+        //Clean data
+        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+        $this->sort_order = htmlspecialchars(strip_tags($this->sort_order));
+        $this->url = htmlspecialchars(strip_tags($this->url));
+        $this->title = htmlspecialchars(strip_tags($this->title));
+        $this->source = htmlspecialchars(strip_tags($this->source));
+        $this->author = htmlspecialchars(strip_tags($this->author));
+        $this->target = htmlspecialchars(strip_tags($this->target));
+
+        // Bind data
+        $statement->bindParam(':id', $this->id);
+        $statement->bindParam(':category_id', $this->category_id);
+        $statement->bindParam(':sort_order', $this->sort_order);
+        $statement->bindParam(':url', $this->url);
+        $statement->bindParam(':title', $this->title);
+        $statement->bindParam(':source', $this->source);
+        $statement->bindParam(':author', $this->author);
+        $statement->bindParam(':target', $this->target);
+
+        echo ("title: " . $this->title);
+
+        // Execute query
+        if($statement->execute()) {
+            return true;
+        }
+
+        // Print error
+        printf("\n\nError: %s.\n", $statement->error);
+        return false;
+    }
+    
+    //Delete post
+    public function delete() {
+        // Create query
+        $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
+
+        // Prepare statement
+        $statement = $this->conn->prepare($query);
+  
+        //Clean data
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+       // Bind data
+       $statement->bindParam(':id', $this->id);
+
+        // Execute query
+        if($statement->execute()) {
+            return true;
+        }
+
+        // Print error
+        printf("\n\nError: %s.\n", $statement->error);
+        return false;
+    }
+
 }
